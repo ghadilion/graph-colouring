@@ -41,13 +41,14 @@ void graph::greedyColouring() {
 }
 
 void graph::displayColours() {
-    for(int vertex = 1; vertex <= numberOfVertices; ++vertex)
-        std::cout << "Vertex " << vertex << " : " << "colour " << colours[vertex-1] << std::endl;
+    for(int vertex = 0; vertex < numberOfVertices; ++vertex)
+        std::cout << "Vertex " << vertex << " : " << "colour " << colours[vertex] << std::endl;
 }
 
 int main()
 {
     int nov, noe;
+    std::cout << "Caution to USER : Indexing of nodes must begin from 0 !!!" << std::endl;
     std::cout << "Enter number of vertices (order) of the graph - ";
     std::cin >> nov;
     std::cout << "Enter number of edges (size) of the graph - ";
@@ -56,11 +57,16 @@ int main()
     graph t(nov);
 
     int u, v, i = 0;
-    while(i<noe){
+    while(i < noe){
         std::cout << "Enter the pair to be linked (separated by space) - ";
         std::cin >> u;
         std::cin >> v;
-        t.addEdge(u, v);
+        if(u >= nov || v >= nov){
+            i--;
+            std::cout << "Error : Vertex index cannot exceed order of graph!" << std::endl;
+        } else {
+            t.addEdge(u, v);
+        }
         i++;
     }
 
