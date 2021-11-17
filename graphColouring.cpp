@@ -3,19 +3,21 @@
 #include <map>
 
 class graph {
-    std::map<int, std::vector<int>> adjVertices;
+    std::map<int, std::vector<int>> adjVertices;    // contains every vertex along with its adjacent vertices 
     int numberOfVertices;
-    std::vector<int> colours;
+    std::vector<int> colours;                       // stores the colour of each vertex
 public:
-    graph(int num);
-    void addEdge(int v1, int v2);
-    void greedyColouring();
-    void displayColours();
+    graph(int num);                                 // initializes numOfVertices and colours
+    void addEdge(int v1, int v2);                   // adds an edge between 2 vertices
+    void greedyColouring();                         // performs the greedy colouring algorithm
+    void displayColours();                          // displays the colour of each vertex
 };
 
 graph::graph(int num) {
     numberOfVertices = num;
-    colours.resize(numberOfVertices, -1); //initializes all values in vector to -1
+    colours.resize(numberOfVertices, -1);           // initializes all values in vector to -1
+                                                    // this denotes that none of the vertices 
+                                                    // have been allocated a colour
 }
 
 void graph::addEdge(int v1, int v2) {
@@ -24,18 +26,32 @@ void graph::addEdge(int v1, int v2) {
 }
 
 void graph::greedyColouring() {
-    colours[0] = 0; //set the colour of vertex 0 to colour 0
-
-    for(int vertex = 1; vertex < numberOfVertices; ++vertex) { //iterate through the remaining vertices in graph
+    colours[0] = 0;                                 // set the colour of vertex 0 to colour 0
+    
+    // iterate through the remaining vertices in graph
+    for(int vertex = 1; vertex < numberOfVertices; ++vertex) { 
+        
+        // declare a vector of booleans to keep track of the used colours 
         std::vector<bool> usedColours(numberOfVertices, false);
 
         std::vector<int>::iterator adjVertex;
-        for(adjVertex = adjVertices[vertex].begin(); adjVertex != adjVertices[vertex].end(); ++adjVertex) //iterate through all adjacent vertices of a vertex
-            if(colours[*adjVertex] != -1)
-                usedColours[colours[*adjVertex]] = true;
 
+        //iterate through all adjacent vertices of the vertex
+        for(adjVertex = adjVertices[vertex].begin(); adjVertex != adjVertices[vertex].end(); ++adjVertex) { 
+            
+            // check whether the current adjacent vertex has already been allocated a colour 
+            if(colours[*adjVertex] != -1) {
+                // mark the colour allocated to current adjacent vertex as used
+                usedColours[colours[*adjVertex]] = true;  
+            }
+        
+        }
+
+        // determine the numeric value of the smallest colour not allocated to an adjacent vertex yet
         int minColour;
         for(minColour = 0; usedColours[minColour] != false; ++minColour);
+        
+        // set the colour of current vertex to the smallest unallocated colour
         colours[vertex] = minColour;
     }
 }
@@ -47,30 +63,29 @@ void graph::displayColours() {
 
 int main()
 {
-    int nov, noe;
+    int numberOfVertices, numberOfEdges;
     std::cout << "Caution to USER : Indexing of nodes must begin from 0 !!!" << std::endl;
     std::cout << "Enter number of vertices (order) of the graph - ";
-    std::cin >> nov;
+    std::cin >> numberOfVertices;
     std::cout << "Enter number of edges (size) of the graph - ";
-    std::cin >> noe;
+    std::cin >> numberOfEdges;
 
-    graph t(nov);
+    graph t(numberOfVertices);
 
-    int u, v, i = 0;
-    while(i < noe){
+    int u, v;
+    for(int i = 0; i < numberOfEdges; ++i) {
         std::cout << "Enter the pair to be linked (separated by space) - ";
-        std::cin >> u;
-        std::cin >> v;
-        if(u >= nov || v >= nov){
-            i--;
+        std::cin >> u >> v;
+        if(u >= numberOfVertices || v >= numberOfVertices) {
             std::cout << "Error : Vertex index cannot exceed order of graph!" << std::endl;
-        } else {
+            i--;
+        } 
+        else
             t.addEdge(u, v);
-        }
-        i++;
     }
 
     t.greedyColouring();
     t.displayColours();
+
     return 0;
 }
