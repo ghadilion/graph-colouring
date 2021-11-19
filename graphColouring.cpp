@@ -8,8 +8,7 @@ class graph {
     int numberOfVertices;
     std::map<int, int> colours;                     // stores the colour of each vertex
 public:
-    graph(int num);                                 // initializes numOfVertices and colours
-    bool addVertex(int v);                          // adds vertices to the graph
+    graph(int num);                                 // initializes numOfVertices
     bool addEdge(int v1, int v2);                   // adds an edge between 2 vertices
     void greedyColouring();                         // performs the greedy colouring algorithm
     void displayColours();                          // displays the colour of each vertex
