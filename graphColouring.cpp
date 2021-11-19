@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <iterator>
+#include <algorithm>
 
 class graph {
     std::map<int, std::vector<int>> adjVertices;    // contains every vertex along with its adjacent vertices 
@@ -19,34 +19,34 @@ graph::graph(int num) {
     numberOfVertices = num;                         
 }
 
-bool graph::addVertex(int v){
+bool graph::addEdge(int v1, int v2) {
+    bool v1Exists = adjVertices.count(v1), v2Exists = adjVertices.count(v2);
+    int remainingVertices = numberOfVertices - adjVertices.size();
 
-    //Vertex added only when it doesn't exist already
-    if(adjVertices.count(v) == 0){
-        std::vector<int> edgeList;
-        this->adjVertices.insert({v, edgeList});        // Vertex added with no associated edges
-        this->colours.insert({v, -1});                  // Color of new vertex set to -1
-        return true;
-    } 
-    else {
-        std::cout << "addVertex Error : Vertex already exists !!!" << std::endl;
+    if((!v1Exists && !v2Exists && remainingVertices < 2)
+    || ((!v1Exists || !v2Exists) && !remainingVertices)) {
+        std::cout << "Error: Graph cannot contain more than " << numberOfVertices << " vertices!!!\n";
         return false;
     }
-}
+    if(!v1Exists) {
+        adjVertices.insert({v1, std::vector<int>(0)});     // Vertex added with no associated edges
+        colours.insert({v1, -1});                          // Color of new vertex set to -1
+    }
+    if(!v2Exists) {
+        adjVertices.insert({v2, std::vector<int>(0)});        
+        colours.insert({v2, -1});
+    }
 
-bool graph::addEdge(int v1, int v2) {
-    int v1Exists = this->adjVertices.count(v1);
-    int v2Exists = this->adjVertices.count(v2);
-
-    //Edege is created only when the vertices are found in the graph
-    if(v1Exists != 0 && v2Exists != 0){
+    bool edgeAlreadyExists = (std::find(adjVertices[v1].begin(), adjVertices[v1].end(), v2) != adjVertices[v1].end());
+    
+    if(edgeAlreadyExists) {
+        std::cout << "Error: Edge already exists!!!\n";
+        return false;
+    }
+    else {
         adjVertices[v1].push_back(v2);
         adjVertices[v2].push_back(v1);
         return true;
-    }
-    else {
-        std::cout << "addEdge Error : Vertex index not found !!!" << std::endl;
-        return false;
     }
 }
 
@@ -57,8 +57,7 @@ void graph::greedyColouring() {
     colours[vertexItr->first] = 0;              
 
     // iterate through the remaining vertices in graph
-    vertexItr++;
-    for( ; vertexItr != adjVertices.end(); vertexItr++){ 
+    for(vertexItr++; vertexItr != adjVertices.end(); vertexItr++){ 
         
         // declare a vector of booleans to keep track of the used colours 
         std::vector<bool> usedColours(numberOfVertices, false);
@@ -72,7 +71,6 @@ void graph::greedyColouring() {
                 // mark the colour allocated to current adjacent vertex as used
                 usedColours[colours[*adjVertex]] = true;  
             }
-        
         }
 
         // determine the numeric value of the smallest colour not allocated to an adjacent vertex yet
@@ -98,14 +96,6 @@ int main() {
 
     graph t(numberOfVertices);
 
-    int i = 0, userVertex;
-    while(i < numberOfVertices){
-        std::cout << "Enter vertex to be added - ";
-        std::cin >> userVertex;
-        if(t.addVertex(userVertex) == true)
-            i++;
-    }
-
     std::cout << "Enter number of edges (size) of the graph - ";
     std::cin >> numberOfEdges;
 
@@ -113,7 +103,7 @@ int main() {
     while(j < numberOfEdges){
         std::cout << "Enter the pair to be linked (separated by space) - ";
         std::cin >> userinpU >> userinpV;
-        if(t.addEdge(userinpU, userinpV) == true)
+        if(t.addEdge(userinpU, userinpV))
             j++;
     }
 
