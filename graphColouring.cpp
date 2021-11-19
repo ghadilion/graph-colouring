@@ -89,26 +89,30 @@ void graph::displayColours() {
 
 int main() {
 
-    int numberOfVertices, numberOfEdges;
+    char again = 'y';
+    while(again == 'y' || again == 'Y') {
+        int numberOfVertices, numberOfEdges;
 
-    std::cout << "Enter number of vertices (order) of the graph - ";
-    std::cin >> numberOfVertices;
+        std::cout << "Enter number of vertices (order) of the graph - ";
+        std::cin >> numberOfVertices;
 
-    graph t(numberOfVertices);
+        graph t(numberOfVertices);
 
-    std::cout << "Enter number of edges (size) of the graph - ";
-    std::cin >> numberOfEdges;
+        std::cout << "Enter number of edges (size) of the graph - ";
+        std::cin >> numberOfEdges;
 
-    int j = 0, userinpU, userinpV;
-    while(j < numberOfEdges){
-        std::cout << "Enter the pair to be linked (separated by space) - ";
-        std::cin >> userinpU >> userinpV;
-        if(t.addEdge(userinpU, userinpV))
-            j++;
+        int j = 0, userinpU, userinpV;
+        while(j < numberOfEdges){
+            std::cout << "Enter the pair to be linked (separated by space) - ";
+            std::cin >> userinpU >> userinpV;
+            if(t.addEdge(userinpU, userinpV))
+                j++;
+        }
+
+        t.greedyColouring();
+        t.displayColours();
+        std::cout << "\nAgain? (y/n): ";
+        std::cin >> again;
     }
-
-    t.greedyColouring();
-    t.displayColours();
-
     return 0;
 }
